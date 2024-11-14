@@ -1,0 +1,66 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model UserApiLimit {
+ id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserSubscription {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique
+  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?   @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+}
+
+model UserCreate {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  username      String
+  email         String
+  phone         String
+  password      String
+  division      String
+  district      String
+  upazila       String
+  branchCode    Int       // Ensuring this is an integer field
+  status        String     @default("pending")
+  createdAt     DateTime   @default(now())
+  transactions  String[]   // Define as String[] explicitly
+}
+
+
+model DailyTransaction {
+  id                     String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId                 String         // Foreign key to associate transaction with a user
+  newSavingsAccounts     Int?
+  newDPSAccounts         Int?
+  newLoanAccounts        Int?
+  oldSavingsAccounts     Int?
+  oldDPSAccounts         Int?
+  oldLoanAccounts        Int?
+  savingsCollection      Int?
+  loanCollectionRegular  Int?
+  loanCollectionSMA      Int?
+  loanCollectionCL       Int?
+  loanDisbursement       Int?
+  savingsWithdrawn       Int?
+  operatingExpenses      Int?
+  totalDebitPosting      Int?
+  totalCreditPosting     Int?
+  cumulativeProfile      Int?
+  status                 String         @default("submit")
+  createdAt              DateTime       @default(now())
+
+ 
+}
